@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sholok Delivery Area & Rate Management</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><span class="logo">S</span><div><b>SHOLOK</b><small>Admin Panel</small></div></div>
+  <nav>
+    <a class="active" href="#dashboard">▦ Dashboard</a>
+    <a href="#deliveryAreas">⌖ Delivery Areas</a>
+    <a href="#rateGroups">৳ Rate Groups</a>
+    <a href="#assignment">⇄ Delivery Area Assignment</a>
+    <a href="#assignedRates">▤ Assigned Zone Rates</a>
+  </nav>
+  <div class="side-note">Bangladesh delivery hierarchy<br><strong>8 Divisions · 64 Districts · 763 Areas</strong></div>
+</aside>
+
+<main class="main">
+<header class="header">
+  <div class="head-left">
+    <button class="menu" id="menuBtn">☰</button>
+    <div><h1>Delivery Area & Rate Management</h1><p>Manage delivery areas, rate groups and zone assignments.</p></div>
+  </div>
+  <!--<div class="online"><i></i> Frontend Mode</div>-->
+</header>
+
+<section class="stats" id="dashboard">
+  <div class="stat"><span>🌐</span><div><small>Divisions</small><strong>8</strong></div></div>
+  <div class="stat"><span>🏙️</span><div><small>Districts</small><strong id="districtsCount">64</strong></div></div>
+  <div class="stat"><span>📍</span><div><small>Delivery Areas</small><strong id="areasCount">763</strong></div></div>
+  <div class="stat"><span>৳</span><div><small>Rate Groups</small><strong id="groupsCount">0</strong></div></div>
+</section>
+
+<section class="panel summary-panel" id="coverageSummary">
+  <div class="panel-title">
+    <div><h2>Assignment Coverage</h2><p>Current delivery-area assignment status across all stores and rate groups.</p></div>
+    <button class="btn small" id="viewUnassignedBtn">Unassigned Areas → View List</button>
+  </div>
+  <div class="coverage-grid">
+    <div><small>Assigned Areas</small><strong id="assignedAreasCount">0 / 763</strong></div>
+    <div><small>Unassigned Areas</small><strong id="unassignedAreasCount">763</strong></div>
+    <div><small>Enabled Areas</small><strong id="enabledAreasCount">763</strong></div>
+    <div><small>Disabled Areas</small><strong id="disabledAreasCount">0</strong></div>
+    <div><small>Assignment Coverage</small><strong id="coveragePercent">0%</strong></div>
+  </div>
+</section>
+
+<section class="panel hidden" id="unassignedPanel">
+  <div class="panel-title"><div><h2>Unassigned Delivery Areas</h2><p>Areas that have no Rate Group assignment in any Store Location.</p></div><button class="btn" id="closeUnassignedBtn">Close</button></div>
+  <div class="table-wrap"><table><thead><tr><th>Division</th><th>District</th><th>Area</th><th>Status</th><th>Assignments</th></tr></thead><tbody id="unassignedTable"></tbody></table></div>
+</section>
+
+<section class="panel" id="deliveryAreas">
+  <div class="panel-title">
+    <div><h2>Delivery Areas</h2><p>763 saved Bangladesh delivery areas plus any custom saved areas. Custom districts are also supported.</p></div>
+    <button class="btn primary" id="newAreaBtn">＋ Add Delivery Area</button>
+  </div>
+  <div id="areaForm" class="form-box hidden">
+    <div class="form-grid four">
+      <label>Division / Region<select id="areaDivision"></select></label>
+      <label>City / District
+        <select id="areaDistrict"></select>
+        <input id="areaDistrictInput" placeholder="Enter new City / District (Add only)">
+      </label>
+      <label>Zone / Area<input id="areaName" placeholder="Enter delivery area"></label>
+      <div class="form-actions"><button class="btn primary" id="saveArea">Save</button><button class="btn" id="cancelArea">Cancel</button></div>
+    </div>
+    <p class="hint" id="areaFormHint">For a new Delivery Area, choose an existing City / District or enter a new one. When editing an existing Delivery Area, City / District is locked; use <b>Edit District</b> in the table to rename the District separately.</p>
+  </div>
+  <div class="filter-grid">
+    <label>Search<input id="areaSearch" placeholder="Search district or area..."></label>
+    <label>Division<select id="areaFilterDivision"></select></label>
+    <label>District<select id="areaFilterDistrict"></select></label>
+  </div>
+  <div class="bulk-toolbar">
+    <div><b id="areaSelectionCount">0 selected</b></div>
+    <div class="toolbar-right">
+      <button class="btn small" id="areaSelectAll">Select All</button>
+      <button class="btn small" id="areaClearAll">Clear</button>
+      <button class="btn small primary" id="areaEnableSelected">Enable Selected</button>
+      <button class="btn small danger" id="areaDisableSelected">Disable Selected</button>
+      <button class="btn small" id="exportAreasBtn">Export CSV</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table><thead><tr><th>Region / Division</th><th>City / District</th><th>Zone / Area</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody id="areaTable"></tbody></table>
+  </div>
+  <div id="areaPagination" class="pagination"></div>
+</section>
+
+<div id="districtForm" class="modal hidden"><div class="modal-card"><div class="modal-head"><div><h3>Edit City / District</h3><p id="districtFormSubtitle"></p></div><button class="btn" id="cancelDistrict">Close</button></div><div class="form-grid"><label>Division / Region<input id="districtDivision" readonly></label><label>Current City / District<input id="districtCurrent" readonly></label><label>New City / District<input id="districtNew" placeholder="Enter new district name"></label></div><p class="hint">Renaming a District updates all Delivery Areas and existing assignments under that District. It does not create an extra District.</p><div class="form-actions"><button class="btn primary" id="saveDistrict">Save District</button><button class="btn" id="cancelDistrict2">Cancel</button></div></div></div>
+
+<section class="panel" id="rateGroups">
+  <div class="panel-title">
+    <div><h2>Rate Groups</h2><p>Create up to 17 reusable delivery charge groups by store location. Only groups you create can be assigned.</p></div>
+    <button class="btn primary" id="newGroupBtn">＋ Add Rate Group</button>
+  </div>
+  <div id="groupForm" class="form-box hidden">
+    <div class="form-grid four">
+      <label>Store Location<select id="groupStore"></select></label>
+      <label>Rate Group Name<input id="groupName" type="text" placeholder="e.g. Inside Dhaka"></label>
+      <label>Base Rate — First 1 KG<input id="baseRate" type="number" min="0" step="1" placeholder="60"></label>
+      <label>Additional Per KG<input id="additionalRate" type="number" min="0.01" step="0.01" placeholder="20"></label>
+      <label>Weight Slabs (optional)<input id="slabRates" type="text" placeholder="1:60, 2:80, 3:100, 5:140, 10:240"></label>
+    </div>
+    <div class="form-actions"><button class="btn primary" id="saveGroup">Save</button><button class="btn" id="cancelGroup">Cancel</button></div>
+    <p class="formula">Formula: Base + Additional × (KG − 1). Optional slab rates override the formula for matching weights (e.g. 1:60, 2:80, 5:140).</p>
+  </div>
+  <div class="group-grid" id="groupGrid"></div>
+</section>
+
+<section class="panel" id="assignment">
+  <div class="panel-title">
+    <div><h2>Delivery Area Assignment</h2><p>Division → District → saved Delivery Areas → Rate Group.</p></div>
+    <button class="btn primary" id="assignAllBtn">Assign Selected Zones</button>
+  </div>
+  <div class="area-controls">
+    <label>Store Location<select id="assignStore"></select></label>
+    <label>Division / Region<select id="assignDivision"></select></label>
+    <label>City / District<select id="assignDistrict"></select></label>
+    <label>Rate Group<select id="assignGroup"></select></label>
+  </div>
+  <div class="zone-toolbar">
+    <div><b id="zoneTitle">Delivery Areas</b> <span id="zoneMeta"></span></div>
+    <div class="toolbar-right"><input id="zoneSearch" placeholder="Search all areas..."><button class="btn small" id="selectAll">Select All</button><button class="btn small" id="clearAll">Clear</button></div>
+  </div>
+  <div id="assignmentPreview" class="assignment-preview"></div>
+  <div id="zoneList" class="zone-list"></div>
+</section>
+
+<section class="panel" id="assignedRates">
+  <div class="panel-title">
+    <div><h2>Assigned Zone Rates</h2><p>Base, 2 KG and 3 KG charges are calculated automatically. Use Edit Rates to update the Rate Group charges.</p></div>
+  </div>
+  <div class="filter-grid assignment-filters">
+    <label>Store Location Filter<select id="assignedStoreFilter"></select></label>
+    <label>Division Filter<select id="assignedDivisionFilter"></select></label>
+    <label>District Filter<select id="assignedDistrictFilter"></select></label>
+    <label>Rate Group Filter<select id="assignedGroupFilter"></select></label>
+    <label>Search<input id="assignmentSearch" placeholder="Search store, group, district, area..."></label>
+  </div>
+  <div class="bulk-toolbar">
+    <div><b id="assignmentSelectionCount">0 selected</b></div>
+    <div class="toolbar-right">
+      <button class="btn small" id="assignmentSelectAll">Select All</button>
+      <button class="btn small" id="assignmentClearAll">Clear</button>
+      <button class="btn small danger" id="assignmentRemoveSelected">Remove Selected</button>
+      <button class="btn small" id="exportAssignmentsBtn">Export CSV</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table><thead><tr><th>Select</th><th>Store Location</th><th>Rate Group</th><th>Region</th><th>City / District</th><th>Zone / Area</th><th>Base Charge (1kg)</th><th>Charge (2kg)</th><th>Charge (3kg)</th><th>Action</th></tr></thead>
+    <tbody id="assignmentTable"></tbody></table>
+  </div>
+  <div id="assignmentPagination" class="pagination"></div>
+</section>
+
+<div id="assignedRateEditModal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div><h3>Edit Assigned Zone Rates</h3><p id="assignedRateEditSubtitle"></p></div>
+      <button class="btn" id="closeAssignedRateEdit">Close</button>
+    </div>
+    <div class="form-grid four">
+      <label>Base Charge (1 KG)<input id="assignedEditBase" type="number" min="0.01" step="0.01"></label>
+      <label>Charge (2 KG)<input id="assignedEdit2kg" type="number" min="0.01" step="0.01"></label>
+      <label>Charge (3 KG)<input id="assignedEdit3kg" type="number" min="0.01" step="0.01"></label>
+    </div>
+    <p class="hint">Saving changes only this Assigned Zone Rate. The Rate Group rate is not changed. If this assignment is later switched to another Rate Group, its custom rates will be cleared and it will use the new Rate Group rates.</p>
+    <div class="form-actions"><button class="btn primary" id="saveAssignedRateEdit">Save Rates</button><button class="btn" id="cancelAssignedRateEdit">Cancel</button></div>
+  </div>
+</div>
+
+<footer>Data is stored in browser localStorage. Saved hierarchy: 8 divisions / 64 districts / 763 delivery areas. Custom saved areas increase the total.</footer>
+</main>
+</div>
+<div class="modal hidden" id="assignmentModal"><div class="modal-card"><div class="modal-head"><div><h3 id="modalTitle">Assignments</h3><p id="modalSubtitle"></p></div><button class="btn" id="closeModal">Close</button></div><div id="modalBody"></div></div></div>
+<div id="toast" class="toast"></div>
+<script src="script.js?v=20260928-division-filter-fix-v2"></script>
+</body>
+</html>
