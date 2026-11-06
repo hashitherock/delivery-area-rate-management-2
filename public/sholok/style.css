@@ -53,3 +53,4 @@ label{font-size:15px}input,select{font-size:16px;height:44px}
 /* Phone fixes */
 @media(max-width:800px){.header{flex-wrap:wrap}.toolbar-right{flex-wrap:wrap}.panel-title>div:last-child{flex-wrap:wrap}}
 @media(max-width:520px){body{font-size:16px}.header h1{font-size:21px}.main{padding:12px}.toolbar-right>*{flex:1 1 auto}}
+.sidebar nav a.active{box-shadow:inset 3px 0 0 #D31710}.side-note strong{color:#e9d5f7}
