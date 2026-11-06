@@ -715,3 +715,6 @@ function saveGroup(){
   $("groupStore").disabled=false;$("groupName").disabled=false;$("groupForm").dataset.assignedRateEdit="";
   toast(edit?"Rate Group updated successfully.":"Rate Group saved.");
 }
+
+// Phone menu: close after choosing a section or tapping outside
+document.addEventListener("click",function(e){var s=document.getElementById("sidebar");if(!s||!s.classList.contains("open"))return;if(e.target.closest("#menuBtn"))return;if(e.target.closest("#sidebar nav a")||!e.target.closest("#sidebar"))s.classList.remove("open")});
